@@ -1,0 +1,24 @@
+---
+version: "2"
+services:
+  homer:
+    image: b4bz/homer
+    #To build from source, comment previous line and uncomment below build: 
+    container_name: homer
+    volumes:
+      - ../data/www/assets:/www/assets
+        # # using caddy-docker-proxy this is only for debug
+        #ports:
+        #  - 8080:8080
+    user: 1000:1000 # default
+    environment:
+      - INIT_ASSETS=0 # default
+    networks:
+      - caddy
+    labels:
+      caddy: http://dashboard.nas.lan:80
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+
+networks:
+  caddy:
+    external: true

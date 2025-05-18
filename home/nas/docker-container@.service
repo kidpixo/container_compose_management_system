@@ -1,0 +1,16 @@
+[Unit]
+Description=%I Docker Container
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+WorkingDirectory=/srv/container/%i/docker
+ExecStartPre=-/usr/bin/docker stop %1
+ExecStartPre=-/usr/bin/docker rm %i
+; ExecStartPre=/usr/bin/docker pull %i
+ExecStart=start.sh
+
+[Install]
+WantedBy=multi-user.target

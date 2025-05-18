@@ -1,0 +1,17 @@
+[Unit]
+Description=%I Docker Container
+After=docker.service
+Requires=docker.service
+
+[Service]
+RemainAfterExit=true
+RootDirectory=/srv/container/%i/docker
+ExecStartPre=-/usr/bin/docker stop %i
+ExecStartPre=-/usr/bin/docker rm %i
+#ExecStartPre=/usr/bin/docker pull %i
+ExecStart=/srv/container/%i/docker/start.sh
+ExecStop=/usr/bin/docker stop %i
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

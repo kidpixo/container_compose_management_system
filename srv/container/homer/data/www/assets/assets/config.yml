@@ -1,0 +1,159 @@
+---
+# Homepage configuration
+# See https://fontawesome.com/v5/search for icons options
+
+title: "D'Amore Home Dashboard"
+subtitle: "Home Network"
+logo: "logo.png"
+# icon: "fas fa-skull-crossbones" # Optional icon
+
+header: False
+columns: 3
+
+# Optional theme customization
+theme: default
+colors:
+  light:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#f5f5f5"
+    card-background: "#ffffff"
+    text: "#363636"
+    text-header: "#ffffff"
+    text-title: "#303030"
+    text-subtitle: "#424242"
+    card-shadow: rgba(0, 0, 0, 0.1)
+    link: "#3273dc"
+    link-hover: "#363636"
+  dark:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#131313"
+    card-background: "#2b2b2b"
+    text: "#eaeaea"
+    text-header: "#ffffff"
+    text-title: "#fafafa"
+    text-subtitle: "#f5f5f5"
+    card-shadow: rgba(0, 0, 0, 0.4)
+    link: "#3273dc"
+    link-hover: "#ffdd57"
+
+# # Optional message
+# message:
+#   title: "DuckDuckGo Search Box"
+#   icon: "fa fa-magnifying-glass"
+#   content: '<iframe src="https://duckduckgo.com/search.html?prefill=Search DuckDuckGo&focus=yes&kz=1&kac=1&kn=1&kp=-2&k1=-1" style="overflow:hidden;margin:0;padding:0;width:calc(100% - 100px);height:60px;" frameborder="0"></iframe>'
+#
+# Optional navbar
+links: [] # Allows for navbar (dark mode, layout, and search) without any links
+# links:
+#   - name: "Contribute"
+#     icon: "fab fa-github"
+#     url: "https://github.com/bastienwirtz/homer"
+#     target: "_blank" # optional html a tag target attribute
+#   - name: "Wiki"
+#     icon: "fas fa-book"
+#     url: "https://www.wikipedia.org/"
+#   # this will link to a second homer page that will load config from additional-page.yml and keep default config values as in config.yml file
+#   # see url field and assets/additional-page.yml.dist used in this example:
+#   #- name: "another page!"
+#   #  icon: "fas fa-file-alt"
+#   #  url: "#additional-page" 
+
+# Services
+# First level array represent a group.
+# Leave only a "items" key if not using group (group name, icon & tagstyle are optional, section separation will not be displayed).
+services:
+  - name: "Applications"
+    icon: "fas fa-cloud"
+    items:
+      - name: "home assistant"
+        logo: "assets/tools/home-assistant.png"
+        subtitle: ""
+        tag: "iot"
+        keywords: "home-assistant"
+        url: "http://192.168.0.64:8123/lovelace-test/debug"
+        # target: "_blank" # optional html a tag target attribute
+      - name: "Play"
+        logo: "assets/tools/kodi.png"
+        subtitle: "Kodi"
+        tag: "app"
+        url: "http://192.168.0.27/"
+      - name: "Media"
+        logo: "assets/tools/jellyfin.png"
+        subtitle: "Jellyfin"
+        tag: "app"
+        url: "http://jellyfin.nas.lan/"
+        type: "Emby"
+        libraryType: "movies"
+      - name: "Notes"
+        logo: "assets/tools/joplin.png"
+        subtitle: "Joplin"
+        tag: "container"
+        url: "http://joplin.nas.lan/"
+      - name: "Articles"
+        logo: "assets/tools/wallabag.png"
+        subtitle: "Wallabag"
+        tag: "container"
+        url: "http://wallabag.nas.lan/"
+      - name: "Photo"
+        logo: "assets/tools/photoprism.png"
+        subtitle: "Photoprims"
+        tag: "container"
+        url: "http://photoprism.nas.lan/"
+  - name: "Applications"
+    icon: "fas fa-cloud"
+    items:
+      - name: "NextCloud"
+        logo: "assets/tools/nextcloud.png"
+        subtitle: "selfhosted cloud services"
+        tag: "container"
+        url: "http://nextcloud.nas.lan/"
+        #type: "Ping"
+        #endpoint: "http://nextcloud.nas.lan/"
+      - name: "FileBrowser"
+        logo: "assets/tools/filebrowser.png"
+        subtitle: "selfhosted filebrowser"
+        tag: "container"
+        url: "http://filebrowser.nas.lan/"
+        #type: "Ping"
+        #endpoint: "http://nextcloud.nas.lan/"
+      - name: "NextCloud Talk"
+        logo: "assets/tools/nextcloud-talk.png"
+        subtitle: "selfhosted chat video calls"
+        tag: "container"
+        url: "http://nextcloud.nas.lan/call/rjd8oybe"
+      - name: "Adguard"
+        logo: "assets/tools/adguard-home.png"
+        url: "http://192.168.0.64:8123/hassio/ingress/a0d7b954_adguard"
+        type: "AdGuardHome" 
+      - name: "ChatGPT"
+        logo: "assets/tools/rocketchat.png"
+        subtitle: "selfhosted chatgpt web interface"
+        tag: "container"
+        url: "http://chatgptui.nas.lan/"
+      - name: "Paperless"
+        logo: "assets/tools/paperless-ng.png"
+        subtitle: "selfhosted paper scan and OCR"
+        tag: "container"
+        url: "http://paperless-ngx.nas.lan/"
+  - name: "Maintenance"
+    icon: "fas fa-cloud"
+    items:
+      - name: "Portainer"
+        logo: "assets/tools/portainer.png"
+        subtitle: "Containers management"
+        url: "http://portainer.nas.lan/"
+        tag: "container"
+      - name: "Logs"
+        icon: "fas fa-file-lines"
+        subtitle: "Diun : Docker Logs"
+        url: "http://logs.nas.lan/"
+        tag: "container"
+      - name: "SMART"
+        logo: "assets/tools/scrutiny.png"
+        subtitle: "WebUI for smartd S.M.A.R.T monitoring"
+        url: "http://scrutiny.nas.lan/"
+        tag: "container"

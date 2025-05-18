@@ -1,0 +1,15 @@
+[Unit]
+Description=%I Docker Compose Unit
+Requires=docker.service 
+After=docker.service
+
+[Service]
+RemainAfterExit=true
+WorkingDirectory=/srv/container/%i/docker
+# --project-name : see https://stackoverflow.com/a/52099893/1435167 : docker-compose takes the name of the directory it is in as the default project name.
+ExecStart=/usr/bin/docker-compose --project-name %i up -d --remove-orphans
+ExecStop=/usr/bin/docker-compose down
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
