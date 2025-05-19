@@ -1,3 +1,4 @@
+<a name="top"></a>
 # Docker Service Management System
 
 This system provides a structured way to manage Docker Compose projects and standalone containers on a server. It uses a standardized directory layout, custom Bash utilities, and systemd unit files to simplify deployment, management, and extension of services.
@@ -17,6 +18,7 @@ This can probably be done also with podman, I just not yet tried.
 
 ---
 
+<a href="#top">[top]</a>
 ## Quickstart
 
 Follow these steps to set up this system on a fresh Linux installation with systemd:
@@ -64,6 +66,7 @@ See the [Example](#example) section below for a step-by-step guide.
 
 ---
 
+<a href="#top">[top]</a>
 ## Directory Structure
 
 All persistent data and Docker configurations are stored under `/srv/container/<service>/`:
@@ -80,6 +83,7 @@ All persistent data and Docker configurations are stored under `/srv/container/<
 
 ---
 
+<a href="#top">[top]</a>
 ## Systemd Units
 
 Two main **template systemd units** are provided in this setup: [`docker-compose@.service`](etc/systemd/system/docker-compose@.service) and [`docker-container@.service`](etc/systemd/system/docker-container@.service).  
@@ -119,6 +123,7 @@ Template systemd units allow you to manage multiple Docker Compose projects or c
 
 ---
 
+<a href="#top">[top]</a>
 ## Bash Utilities
 
 Add these to your `.bashrc` or source them directly.
@@ -155,6 +160,7 @@ Quickly change directory to a service's container folder.
 
 ---
 
+<a href="#top">[top]</a>
 ## Aliases
 
 See [`home/nas/.bash_aliases`](home/nas/.bash_aliases) for helpful Docker and system management aliases, such as:
@@ -167,6 +173,7 @@ See [`home/nas/.bash_aliases`](home/nas/.bash_aliases) for helpful Docker and sy
 
 ---
 
+<a href="#top">[top]</a>
 ## Adding a New Service
 
 1. **Create directories:**
@@ -187,6 +194,7 @@ See [`home/nas/.bash_aliases`](home/nas/.bash_aliases) for helpful Docker and sy
 
 ---
 
+<a href="#top">[top]</a>
 ## Example
 
 Suppose you want to add a service called `homer`. Here’s how you would set it up and where your persistent data will live:
@@ -244,6 +252,7 @@ This will take you to `/srv/container/homer/`, where you can access both the `da
 
 ---
 
+<a href="#top">[top]</a>
 ## Notes
 
 - All persistent data should be mapped to `/srv/container/<service>/data` in your Docker Compose or Docker run configurations.
@@ -252,9 +261,12 @@ This will take you to `/srv/container/homer/`, where you can access both the `da
 
 ---
 
+<a href="#top">[top]</a>
 ## References
 
 - [docker-compose@.service](etc/systemd/system/docker-compose@.service)
 - [docker-container@.service](etc/systemd/system/docker-container@.service)
 - [home/nas/.bash_functions](home/nas/.bash_functions)
 - [home/nas/.bash_aliases](home/nas/.bash_aliases)
+
+<a href="#top">[top]</a>
