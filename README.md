@@ -112,10 +112,22 @@ Add these to your `.bashrc` or source them directly.
 
 ### [`compose_systemctl`](home/nas/.bash_functions)
 
-Run systemctl commands for Docker Compose services.
+Run systemctl commands for Docker Compose services in a simplified way.
 
 - **Usage:**  
   `compose_systemctl <service> [command]`
+
+  - `<service>`: The name of your service (e.g., `homer`)
+  - `[command]`: The systemctl command to run (e.g., `status`, `restart`, `stop`, `start`). If omitted, defaults to `status`.
+
+- **How it works:**  
+  `compose_systemctl` is a Bash function that wraps `sudo systemctl <command> docker-compose@<service>.service`.  
+  For example:
+  - `compose_systemctl homer status`  
+    → runs `sudo systemctl status docker-compose@homer.service`
+  - `compose_systemctl homer restart`  
+    → runs `sudo systemctl restart docker-compose@homer.service`
+
 - **Examples:**  
   - `compose_systemctl homer status`  
   - `compose_systemctl homer restart`
@@ -151,8 +163,8 @@ See [`home/nas/.bash_aliases`](home/nas/.bash_aliases) for helpful Docker and sy
 2. **Add your `docker-compose.yml` or scripts** to `/srv/container/<service>/docker/`.
 3. **Enable and start the service:**
    ```sh
-   sudo systemctl enable docker-compose@<service>.service
-   sudo systemctl start docker-compose@<service>.service
+   compose_systemctl <service> enable
+   compose_systemctl <service> start
    ```
    Or for single containers:
    ```sh
@@ -175,9 +187,9 @@ create_service_dirs homer
 # Copy your docker-compose.yml to /srv/container/homer/docker/
 sudo cp path/to/your/docker-compose.yml /srv/container/homer/docker/
 
-# Enable and start the service using systemd:
-sudo systemctl enable docker-compose@homer.service
-sudo systemctl start docker-compose@homer.service
+# Enable and start the service using compose_systemctl:
+compose_systemctl homer enable
+compose_systemctl homer start
 ```
 
 **Directory Layout for `homer`:**
@@ -197,8 +209,9 @@ When writing your `docker-compose.yml`, make sure to map any persistent volumes 
 services:
   homer:
     image: b4bz/homer
+    container_name: homer
     volumes:
-      - /srv/container/homer/data:/www/assets
+      - ../data:/www/assets
     # ...other options...
 ```
 
@@ -206,6 +219,7 @@ services:
 > The `data` directory is always located at `/srv/container/<service>/data`.  
 > In this example, all persistent data for the `homer` service will be stored in `/srv/container/homer/data`, which is outside the container and survives upgrades, restarts, or container removal.  
 > This makes it easy to back up, migrate, or inspect your service's data.
+> I prefer to ue relative directory to the compose file, because the structure of the `/srv/container/` is fixed. This makes the whole structure _theoretically_ independent from the path (never tested).
 
 You can quickly jump to the service directory using:
 
