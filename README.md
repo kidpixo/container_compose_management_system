@@ -82,27 +82,40 @@ All persistent data and Docker configurations are stored under `/srv/container/<
 
 ## Systemd Units
 
-Two main systemd unit templates are provided:
+Two main **template systemd units** are provided in this setup: [`docker-compose@.service`](etc/systemd/system/docker-compose@.service) and [`docker-container@.service`](etc/systemd/system/docker-container@.service).  
+A **template unit** in systemd is a special kind of unit file that uses an `@` in its name and can be instantiated for different services by specifying an instance name (e.g., `docker-compose@homer.service`). This allows you to use a single unit file to manage multiple, similarly-structured services.
 
 ### [`docker-compose@.service`](etc/systemd/system/docker-compose@.service)
 
-Manages Docker Compose projects as systemd services.
+This template unit is designed to manage Docker Compose projects as systemd services.  
+When you run `sudo systemctl start docker-compose@homer.service`, systemd will:
 
-- **Usage:**  
-  `sudo systemctl start docker-compose@<service>.service`
-- **Working Directory:** `/srv/container/<service>/docker`
-- **Executes:**  
-  `docker compose --project-name <service> up -d --remove-orphans`
+- Set the working directory to `/srv/container/homer/docker` (using `%i` for the instance name).
+- Run `docker compose --project-name homer up -d --remove-orphans` to start the service in detached mode.
+- On stop, run `docker compose --project-name homer down` to stop and remove the containers.
+- The `RemainAfterExit=true` option means systemd will consider the service active even after the command completes, which is suitable for one-shot commands like Docker Compose.
+
+**Key lines from the unit file:**
+```ini
+[Service]
+RemainAfterExit=true
+WorkingDirectory=/srv/container/%i/docker
+ExecStart=/usr/bin/docker compose --project-name %i up -d --remove-orphans
+ExecStop=/usr/bin/docker  compose --project-name %i down
+Type=oneshot
+```
+
+This means you can manage each Docker Compose project as a native systemd service, enabling you to use standard commands like `start`, `stop`, `restart`, and `status` for each service instance.
 
 ### [`docker-container@.service`](etc/systemd/system/docker-container@.service)
 
-Manages single Docker containers as systemd services.
+This template unit is for managing single Docker containers (not Compose projects).  
+It expects a `start.sh` script in `/srv/container/<service>/docker/` to launch the container, and will stop/remove the container on service stop.
 
-- **Usage:**  
-  `sudo systemctl start docker-container@<service>.service`
-- **Working Directory:** `/srv/container/<service>/docker`
-- **Executes:**  
-  Custom `start.sh` script or direct Docker commands.
+---
+
+**In summary:**  
+Template systemd units allow you to manage multiple Docker Compose projects or containers in a uniform way, using a single unit file and the instance name as a parameter. This makes it easy to add, remove, or manage services without duplicating configuration.
 
 ---
 
