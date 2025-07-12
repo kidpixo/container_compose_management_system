@@ -1,272 +1,234 @@
 <a name="top"></a>
-# Docker Service Management System
-
-This system provides a structured way to manage Docker Compose projects and standalone containers on a server. It uses a standardized directory layout, custom Bash utilities, and systemd unit files to simplify deployment, management, and extension of services.
-This can probably be done also with podman, I just not yet tried.
-
-## Table of Contents
-
-- [Quickstart](#quickstart)
-- [Directory Structure](#directory-structure)
-- [Systemd Units](#systemd-units)
-- [Bash Utilities](#bash-utilities)
-- [Aliases](#aliases)
-- [Adding a New Service](#adding-a-new-service)
-- [Example](#example)
-- [Notes](#notes)
-- [References](#references)
+# A Practical Guide to Managing Docker Services on Linux
 
 ---
 
-<a href="#top">[top]</a>
-## Quickstart
+## Why This Project Exists
 
-Follow these steps to set up this system on a fresh Linux installation with systemd:
+**The Problem:**  
+If you've ever managed more than a couple of Docker Compose projects or standalone containers on a Linux server, you know how quickly things get messy. Data ends up scattered, service management is inconsistent, and onboarding new developers or admins can be slow and error-prone.
 
-### 1. Prerequisites
-
-- A Linux system with `systemd`
-- Docker and Docker Compose installed (`docker` and `docker compose` commands available)
-- Sudo privileges
-
-### 2. Copy Template Files
-
-Clone or copy the template repository to your server. Then:
-
-- **Systemd unit files:**  
-  Copy `docker-compose@.service` and `docker-container@.service` to `/etc/systemd/system/`:
-  ```sh
-  sudo cp etc/systemd/system/docker-compose@.service /etc/systemd/system/
-  sudo cp etc/systemd/system/docker-container@.service /etc/systemd/system/
-  sudo systemctl daemon-reload
-  ```
-
-- **Bash functions and aliases:**  
-  Append or source the provided Bash functions and aliases in your shell configuration (e.g., `~/.bashrc`):
-  ```sh
-  cat home/nas/.bash_functions >> ~/.bashrc
-  cat home/nas/.bash_aliases >> ~/.bashrc
-  # Or, to keep them separate and source them:
-  echo 'source ~/nas_template/home/nas/.bash_functions' >> ~/.bashrc
-  echo 'source ~/nas_template/home/nas/.bash_aliases' >> ~/.bashrc
-  source ~/.bashrc
-  ```
-
-### 3. Create the Base Directory
-
-Create the main container directory if it does not exist:
-```sh
-sudo mkdir -p /srv/container
-sudo chown $USER: /srv/container
-```
-
-### 4. Add Your First Service
-
-See the [Example](#example) section below for a step-by-step guide.
+**How This Helps:**  
+This framework gives you a unified, developer-friendly way to organize, deploy, and manage Docker services. By combining systemd template units, a standardized directory layout, and handy shell utilities, it makes service management predictable, repeatable, and easy to automate.
 
 ---
 
-<a href="#top">[top]</a>
-## Directory Structure
+## The Big Picture: Story, Code, and Context
 
-All persistent data and Docker configurations are stored under `/srv/container/<service>/`:
+### Why We Do It
+
+- **Goal:**  
+  Make deploying and managing Docker-based services on Linux simple and consistent.
+- **Benefits:**  
+  - All your data is easy to back up and migrate.
+  - Services are managed natively by systemd for reliability.
+  - New team members can get started quickly.
+- **Design Choices:**  
+  - Every service lives under `/srv/container/<service>/`.
+  - Systemd template units (`docker-compose@.service`, `docker-container@.service`) let you manage many services with one unit file.
+  - Bash utilities and aliases make daily tasks easier.
+
+---
+
+### How It Works (With Real Examples)
+
+#### Directory Structure
 
 ```
 /srv/container/
   <service>/
-    data/    # Persistent data for the service
-    docker/  # Docker Compose files and scripts
+    data/    # Persistent data (volumes, configs, uploads)
+    docker/  # Compose files, scripts
 ```
 
-- **data/**: Used for volumes and persistent storage.
-- **docker/**: Contains `docker-compose.yml` and related scripts.
+#### Example: Deploying the "homer" Dashboard
 
----
-
-<a href="#top">[top]</a>
-## Systemd Units
-
-Two main **template systemd units** are provided in this setup: [`docker-compose@.service`](etc/systemd/system/docker-compose@.service) and [`docker-container@.service`](etc/systemd/system/docker-container@.service).  
-A **template unit** in systemd is a special kind of unit file that uses an `@` in its name and can be instantiated for different services by specifying an instance name (e.g., `docker-compose@homer.service`). This allows you to use a single unit file to manage multiple, similarly-structured services.
-
-### [`docker-compose@.service`](etc/systemd/system/docker-compose@.service)
-
-This template unit is designed to manage Docker Compose projects as systemd services.  
-When you run `sudo systemctl start docker-compose@homer.service`, systemd will:
-
-- Set the working directory to `/srv/container/homer/docker` (using `%i` for the instance name).
-- Run `docker compose --project-name homer up -d --remove-orphans` to start the service in detached mode.
-- On stop, run `docker compose --project-name homer down` to stop and remove the containers.
-- The `RemainAfterExit=true` option means systemd will consider the service active even after the command completes, which is suitable for one-shot commands like Docker Compose.
-
-**Key lines from the unit file:**
-```ini
-[Service]
-RemainAfterExit=true
-WorkingDirectory=/srv/container/%i/docker
-ExecStart=/usr/bin/docker compose --project-name %i up -d --remove-orphans
-ExecStop=/usr/bin/docker  compose --project-name %i down
-Type=oneshot
-```
-
-This means you can manage each Docker Compose project as a native systemd service, enabling you to use standard commands like `start`, `stop`, `restart`, and `status` for each service instance.
-
-### [`docker-container@.service`](etc/systemd/system/docker-container@.service)
-
-This template unit is for managing single Docker containers (not Compose projects).  
-It expects a `start.sh` script in `/srv/container/<service>/docker/` to launch the container, and will stop/remove the container on service stop.
-
----
-
-**In summary:**  
-Template systemd units allow you to manage multiple Docker Compose projects or containers in a uniform way, using a single unit file and the instance name as a parameter. This makes it easy to add, remove, or manage services without duplicating configuration.
-
----
-
-<a href="#top">[top]</a>
-## Bash Utilities
-
-Add these to your `.bashrc` or source them directly.
-
-### [`compose_systemctl`](home/nas/.bash_functions)
-
-Run systemctl commands for Docker Compose services in a simplified way.
-
-- **Usage:**  
-  `compose_systemctl <service> [command]`
-
-  - `<service>`: The name of your service (e.g., `homer`)
-  - `[command]`: The systemctl command to run (e.g., `status`, `restart`, `stop`, `start`). If omitted, defaults to `status`.
-
-- **How it works:**  
-  `compose_systemctl` is a Bash function that wraps `sudo systemctl <command> docker-compose@<service>.service`.  
-  For example:
-  - `compose_systemctl homer status`  
-    → runs `sudo systemctl status docker-compose@homer.service`
-  - `compose_systemctl homer restart`  
-    → runs `sudo systemctl restart docker-compose@homer.service`
-
-- **Examples:**  
-  - `compose_systemctl homer status`  
-  - `compose_systemctl homer restart`
-
-### [`cdcontainer`](home/nas/.bash_functions)
-
-Quickly change directory to a service's container folder.
-
-- **Usage:**  
-  `cdcontainer <service>`
-- **Tab completion** is supported for existing services.
-
----
-
-<a href="#top">[top]</a>
-## Aliases
-
-See [`home/nas/.bash_aliases`](home/nas/.bash_aliases) for helpful Docker and system management aliases, such as:
-
-- `dim` — List Docker images in a custom format.
-- `dps` — List Docker containers in a custom format.
-- `drmc` — Stop and remove a container.
-- `drmi` — Remove a Docker image.
-- `create_service_dirs` — Create the standard directory structure for a new service.
-
----
-
-<a href="#top">[top]</a>
-## Adding a New Service
-
-1. **Create directories:**
-   ```sh
-   create_service_dirs <service>
-   ```
-2. **Add your `docker-compose.yml` or scripts** to `/srv/container/<service>/docker/`.
-3. **Enable and start the service:**
-   ```sh
-   compose_systemctl <service> enable
-   compose_systemctl <service> start
-   ```
-   Or for single containers:
-   ```sh
-   sudo systemctl enable docker-container@<service>.service
-   sudo systemctl start docker-container@<service>.service
-   ```
-
----
-
-<a href="#top">[top]</a>
-## Example
-
-Suppose you want to add a service called `homer`. Here’s how you would set it up and where your persistent data will live:
+**Step 1: Create Service Directories**
 
 ```sh
 create_service_dirs homer
-# This creates:
-# /srv/container/homer/data/
-# /srv/container/homer/docker/
-
-# Copy your docker-compose.yml to /srv/container/homer/docker/
-sudo cp path/to/your/docker-compose.yml /srv/container/homer/docker/
-
-# Enable and start the service using compose_systemctl:
-compose_systemctl homer enable
-compose_systemctl homer start
+# Creates /srv/container/homer/data and /srv/container/homer/docker
 ```
 
-**Directory Layout for `homer`:**
+**Step 2: Add Your Compose File**
 
+Copy your production-ready `docker-compose.yml` to `/srv/container/homer/docker/`.
+
+```sh
+sudo cp path/to/docker-compose.yml /srv/container/homer/docker/
 ```
-/srv/container/homer/
-  data/    # Persistent data for the homer service (e.g., configs, databases, uploads)
-  docker/  # Contains docker-compose.yml and related scripts
-```
 
-**How to use the data directory:**
-
-When writing your `docker-compose.yml`, make sure to map any persistent volumes to `/srv/container/homer/data`. For example:
+**Step 3: Map Persistent Data (Relative Path Example)**
 
 ```yaml
 # /srv/container/homer/docker/docker-compose.yml
 services:
   homer:
     image: b4bz/homer
-    container_name: homer
     volumes:
-      - ../data:/www/assets
+      - ../data/www/assets:/www/assets
     # ...other options...
 ```
+*All persistent data ends up in `/srv/container/homer/data/www/assets`.*
 
-> **Note:**  
-> The `data` directory is always located at `/srv/container/<service>/data`.  
-> In this example, all persistent data for the `homer` service will be stored in `/srv/container/homer/data`, which is outside the container and survives upgrades, restarts, or container removal.  
-> This makes it easy to back up, migrate, or inspect your service's data.
-> I prefer to ue relative directory to the compose file, because the structure of the `/srv/container/` is fixed. This makes the whole structure _theoretically_ independent from the path (never tested).
+**Step 4: Enable and Start the Service**
 
-You can quickly jump to the service directory using:
+```sh
+compose_systemctl homer enable
+compose_systemctl homer start
+```
+Or, using systemd directly:
+```sh
+sudo systemctl enable docker-compose@homer.service
+sudo systemctl start docker-compose@homer.service
+```
+
+**Step 5: Jump to Service Directory**
 
 ```sh
 cdcontainer homer
 ```
 
-This will take you to `/srv/container/homer/`, where you can access both the `data` and `docker` directories.
+---
+
+### When and Where to Use This
+
+- **Where:**  
+  - Any Linux server with systemd and Docker installed.
+  - Any service you want to run as a container or Compose stack.
+- **When:**  
+  - When you want reliable, repeatable service management.
+  - When you want all persistent data in a predictable location for backup/migration.
+- **Integration:**  
+  - Works with CI/CD pipelines (just copy files and run systemctl).
+  - Easy to integrate with backup scripts (just backup `/srv/container`).
+  - Can be adapted for Podman or other container runtimes.
 
 ---
 
-<a href="#top">[top]</a>
-## Notes
+## Getting Started Fast
 
-- All persistent data should be mapped to `/srv/container/<service>/data` in your Docker Compose or Docker run configurations.
-- The systemd units ensure services start on boot and are managed consistently.
-- Use the provided Bash functions and aliases to simplify daily operations.
+- **Quickstart:**  
+  See [Quickstart](#quickstart) for setup instructions.
+- **Common Commands:**  
+  - `compose_systemctl <service> status` — Check status
+  - `compose_systemctl <service> restart` — Restart service
+  - `cdcontainer <service>` — Jump to service directory
 
 ---
 
-<a href="#top">[top]</a>
+## Want to Know More?
+
+- **Systemd Template Units:**  
+  - [`docker-compose@.service`](etc/systemd/system/docker-compose@.service): Manages Compose stacks.
+  - [`docker-container@.service`](etc/systemd/system/docker-container@.service): Manages single containers.
+  - See [Systemd Units](#systemd-units) for details.
+- **Bash Utilities & Aliases:**  
+  - See [home/nas/.bash_functions](home/nas/.bash_functions) and [home/nas/.bash_aliases](home/nas/.bash_aliases).
+
+---
+
+## Real-World Examples
+
+### Add a New Service
+
+```sh
+create_service_dirs nextcloud
+sudo cp path/to/nextcloud-compose.yml /srv/container/nextcloud/docker/docker-compose.yml
+compose_systemctl nextcloud enable
+compose_systemctl nextcloud start
+```
+
+### Remove a Service
+
+```sh
+compose_systemctl nextcloud stop
+sudo systemctl disable docker-compose@nextcloud.service
+sudo rm -rf /srv/container/nextcloud
+```
+
+### List All Running Containers
+
+```sh
+dps
+```
+
+---
+
+## How Everything Fits Together
+
+### Visual Overview
+
+```
+[systemd] <-> [docker-compose@.service] <-> [/srv/container/<service>/docker/docker-compose.yml]
+                                      |
+                                      +-> [Persistent Data: /srv/container/<service>/data]
+```
+
+### Key Points
+
+- One directory per service.
+- One systemd unit per service.
+- One command to manage each service.
+
+---
+
+## Troubleshooting & Failure Scenarios
+
+### Common Issues
+
+- **Service fails to start:**  
+  - Check logs: `sudo journalctl -u docker-compose@<service>.service`
+  - Verify Docker Compose file syntax.
+  - Make sure `/srv/container/<service>/docker` and `/srv/container/<service>/data` exist and have correct permissions.
+
+- **Data not persisted:**  
+  - Check volume mapping in `docker-compose.yml`.
+  - Use absolute or relative paths as shown in examples.
+
+- **Tab completion not working for `cdcontainer`:**  
+  - Make sure `.bash_functions` is sourced in your shell.
+
+### Debugging Tips
+
+- Use `compose_systemctl <service> status` for quick health checks.
+- Use `docker logs <container>` for container-level debugging.
+- Use `ll /srv/container/<service>/data` to inspect persistent files.
+
+---
+
+## How This Fits Into Your Workflow
+
+- **Version Control:**  
+  - Store your Compose files and systemd unit templates in Git.
+  - Use branches for service upgrades or migrations.
+- **Automatic Generation:**  
+  - Use scripts to scaffold new services (`create_service_dirs`).
+  - Integrate with CI/CD for automated deployment.
+
+---
+
 ## References
 
 - [docker-compose@.service](etc/systemd/system/docker-compose@.service)
 - [docker-container@.service](etc/systemd/system/docker-container@.service)
 - [home/nas/.bash_functions](home/nas/.bash_functions)
 - [home/nas/.bash_aliases](home/nas/.bash_aliases)
+- [srv/container/homer/docker/docker-compose.yml](srv/container/homer/docker/docker-compose.yml)
 
-<a href="#top">[top]</a>
+---
+
+## FAQ
+
+**Q: Can I use Podman instead of Docker?**  
+A: Yes, with minor changes to the systemd unit files and Compose commands.
+
+**Q: How do I back up all my service data?**  
+A: Back up `/srv/container` — all persistent data lives there.
+
+**Q: How do I add custom environment variables or ports?**  
+A: Edit your service's `docker-compose.yml` in `/srv/container/<service>/docker/`.
+
+---
+
+<a href="#top">Back to top</a>
