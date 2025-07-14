@@ -1,3 +1,3 @@
-title: container_compose_management_system
+title: simple systemd linux container services management
 description: easy command line docker services management on linux with systemd
-theme: hacker
+remote_theme: https://github.com/JV-conseil/jekyll-theme-read-the-docs
