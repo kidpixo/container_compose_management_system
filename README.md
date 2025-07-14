@@ -104,6 +104,14 @@ cdcontainer homer
   - Easy to integrate with backup scripts (just backup `/srv/container`).
   - Can be adapted for Podman or other container runtimes.
 
+### When you should NOT use it 
+
+- Single or Very Simple Container Setups: When managing only one or a few basic containers where standardization and centralized management aren't a priority.
+- Large-Scale Multi-Server Orchestration: For distributed applications requiring advanced features like auto-scaling, load balancing across multiple nodes, or cluster management (e.g., Kubernetes, Docker Swarm).
+- Existing Incompatible CI/CD Pipelines: When current CI/CD workflows do not align with the project's standardized directory structure or systemd integration.
+- For Complete Beginners to Docker/Systemd: If users lack foundational knowledge of Docker, Docker Compose, or systemd, as a basic understanding is still beneficial.
+- Preference for GUI-Based Management: When a graphical user interface is primarily desired for container management instead of command-line tools.
+
 ---
 
 ## Getting Started Fast
