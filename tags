@@ -130,22 +130,27 @@ ExecStartPre	home/nas/docker-container@.service	/^ExecStartPre=-\/usr\/bin\/dock
 ExecStart	home/nas/docker-container@.service	/^ExecStart=start.sh$/;"	k	section:Service
 Install	home/nas/docker-container@.service	/^[Install]$/;"	s
 WantedBy	home/nas/docker-container@.service	/^WantedBy=multi-user.target$/;"	k	section:Install
-Docker Service Management System	README.md	/^# Docker Service Management System$/;"	c
-Table of Contents	README.md	/^## Table of Contents$/;"	s	chapter:Docker Service Management System
-Quickstart	README.md	/^## Quickstart$/;"	s	chapter:Docker Service Management System
-1. Prerequisites	README.md	/^### 1. Prerequisites$/;"	S	section:Docker Service Management System""Quickstart
-2. Copy Template Files	README.md	/^### 2. Copy Template Files$/;"	S	section:Docker Service Management System""Quickstart
-3. Create the Base Directory	README.md	/^### 3. Create the Base Directory$/;"	S	section:Docker Service Management System""Quickstart
-4. Add Your First Service	README.md	/^### 4. Add Your First Service$/;"	S	section:Docker Service Management System""Quickstart
-Directory Structure	README.md	/^## Directory Structure$/;"	s	chapter:Docker Service Management System
-Systemd Units	README.md	/^## Systemd Units$/;"	s	chapter:Docker Service Management System
-[`docker-compose@.service`](etc/systemd/system/docker-compose@.service)	README.md	/^### [`docker-compose@.service`](etc\/systemd\/system\/docker-compose@.service)$/;"	S	section:Docker Service Management System""Systemd Units
-[`docker-container@.service`](etc/systemd/system/docker-container@.service)	README.md	/^### [`docker-container@.service`](etc\/systemd\/system\/docker-container@.service)$/;"	S	section:Docker Service Management System""Systemd Units
-Bash Utilities	README.md	/^## Bash Utilities$/;"	s	chapter:Docker Service Management System
-[`compose_systemctl`](home/nas/.bash_functions)	README.md	/^### [`compose_systemctl`](home\/nas\/.bash_functions)$/;"	S	section:Docker Service Management System""Bash Utilities
-[`cdcontainer`](home/nas/.bash_functions)	README.md	/^### [`cdcontainer`](home\/nas\/.bash_functions)$/;"	S	section:Docker Service Management System""Bash Utilities
-Aliases	README.md	/^## Aliases$/;"	s	chapter:Docker Service Management System
-Adding a New Service	README.md	/^## Adding a New Service$/;"	s	chapter:Docker Service Management System
-Example	README.md	/^## Example$/;"	s	chapter:Docker Service Management System
-Notes	README.md	/^## Notes$/;"	s	chapter:Docker Service Management System
-References	README.md	/^## References$/;"	s	chapter:Docker Service Management System
+A Practical Guide to Managing Docker Services on Linux	README.md	/^# A Practical Guide to Managing Docker Services on Linux$/;"	c
+Why This Project Exists	README.md	/^## Why This Project Exists$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+The Big Picture: Story, Code, and Context	README.md	/^## The Big Picture: Story, Code, and Context$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+Why We Do It	README.md	/^### Why We Do It$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""The Big Picture: Story, Code, and Context
+How It Works (With Real Examples)	README.md	/^### How It Works (With Real Examples)$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""The Big Picture: Story, Code, and Context
+Directory Structure	README.md	/^#### Directory Structure$/;"	t	subsection:A Practical Guide to Managing Docker Services on Linux""The Big Picture: Story, Code, and Context""How It Works (With Real Examples)
+Example: Deploying the "homer" Dashboard	README.md	/^#### Example: Deploying the "homer" Dashboard$/;"	t	subsection:A Practical Guide to Managing Docker Services on Linux""The Big Picture: Story, Code, and Context""How It Works (With Real Examples)
+When and Where to Use This	README.md	/^### When and Where to Use This$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""The Big Picture: Story, Code, and Context
+When you should NOT use it	README.md	/^### When you should NOT use it $/;"	S	section:A Practical Guide to Managing Docker Services on Linux""The Big Picture: Story, Code, and Context
+Getting Started Fast	README.md	/^## Getting Started Fast$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+Want to Know More?	README.md	/^## Want to Know More?$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+Real-World Examples	README.md	/^## Real-World Examples$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+Add a New Service	README.md	/^### Add a New Service$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""Real-World Examples
+Remove a Service	README.md	/^### Remove a Service$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""Real-World Examples
+List All Running Containers	README.md	/^### List All Running Containers$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""Real-World Examples
+How Everything Fits Together	README.md	/^## How Everything Fits Together$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+Visual Overview	README.md	/^### Visual Overview$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""How Everything Fits Together
+Key Points	README.md	/^### Key Points$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""How Everything Fits Together
+Troubleshooting & Failure Scenarios	README.md	/^## Troubleshooting & Failure Scenarios$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+Common Issues	README.md	/^### Common Issues$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""Troubleshooting & Failure Scenarios
+Debugging Tips	README.md	/^### Debugging Tips$/;"	S	section:A Practical Guide to Managing Docker Services on Linux""Troubleshooting & Failure Scenarios
+How This Fits Into Your Workflow	README.md	/^## How This Fits Into Your Workflow$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+References	README.md	/^## References$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
+FAQ	README.md	/^## FAQ$/;"	s	chapter:A Practical Guide to Managing Docker Services on Linux
